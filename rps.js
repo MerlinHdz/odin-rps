@@ -4,19 +4,11 @@
 // This function should
 // randonmly return one of the following values:
 // 'rock', 'paper', 'scissors'
-// I will not use an array as it was not covered yet lol
 function getComputerChoice() {
     let choices = ['rock', 'paper', 'scissors'];
     let choice = Math.floor(Math.random() * 3);
     return choices[choice];
 }
-
-function getHumanChoice() {
-    let humanChoice = prompt("Rock, Paper, or Scissors?").toLowerCase();
-    return humanChoice;
-}
-
-
 
 function playGame() {
 
@@ -24,18 +16,20 @@ function playGame() {
     const rockButton = document.createElement("button");
     rockButton.textContent = "ROCK";
     document.body.appendChild(rockButton);
-    rockButton.addEventListener("click", e => playRound(e.target.innerText.toLowerCase()))
 
     const paperButton = document.createElement("button");
     paperButton.textContent = "PAPER";
     document.body.appendChild(paperButton);
-    paperButton.addEventListener("click", e => playRound(e.target.innerText.toLowerCase()))
 
 
     const scissorsButton = document.createElement("button");
     scissorsButton.textContent = "SCISSORS";
     document.body.appendChild(scissorsButton);
-    scissorsButton.addEventListener("click", e => playRound(e.target.innerText.toLowerCase()))
+
+    // add event listener to choice buttons
+    [rockButton, paperButton, scissorsButton].forEach(button => {
+        button.addEventListener("click", e => playRound(e.target.innerText.toLowerCase()));
+    });
 
 
     // add a div to display results
@@ -43,9 +37,22 @@ function playGame() {
     document.body.appendChild(results);
 
     
+    // display running score
+    let humanScore = 0;
+    let computerScore = 0; 
+    let gameOver = false;
+
+    const score = document.createElement("p");
+    document.body.appendChild(score);
+
+    const winner = document.createElement("p");
+    document.body.appendChild(winner);
 
 
     function playRound(humanChoice) {
+        // check if game is over
+        if (gameOver) return;
+
         let computerChoice = getComputerChoice();
 
         if (humanChoice == computerChoice) {
@@ -67,11 +74,27 @@ function playGame() {
             results.textContent = `You lose! ${computerChoice} beats ${humanChoice}`;
             computerScore++;
         }
+
+        // update running score
+        score.textContent = `Your Score: ${humanScore}  Computer: ${computerScore}`
+
+        // if a player's score reaches 5, announce winner
+        if (humanScore >= 5) {
+            winner.textContent = "You win!";
+            gameOver = true;
+            disableButtons();
+        } else if (computerScore >= 5) {
+            winner.textContent = "You lose, the computer wins";
+            gameOver = true;
+            disableButtons();
+        }
     }
 
-
-    let humanScore = 0;
-    let computerScore = 0;    
+    function disableButtons() {
+        rockButton.disabled = true;
+        paperButton.disabled = true;
+        scissorsButton.disabled = true;
+    }
 }
 
 
